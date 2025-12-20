@@ -40,7 +40,6 @@
 | days                | huami_pai_record         | 华米 PAI 记录（单日个人活动智能指数，含不同强度运动区间的 PAI 值） |
 | days                | watch_stress_report      | 每日压力报告（汇总单日平均压力、最高 / 最低压力及压力状态分布） |
 | weekly_statistics   | fitness_report           | 周健身报告（汇总每周步数、卡路里、睡眠、心率等综合健康数据） |
-|                     |                          |                                                              |
 
 ## 二、各 Key 对应的 Value 列 JSON 字段含义
 
@@ -52,6 +51,8 @@
   "distance": 139,                   // 单日总距离（单位：米）
   "actSteps": {"0": 217},            // 实际步数（0为默认设备标识，值为217）
   "goal": 6000                       // 单日步数目标（6000步）
+  "calories": 5,                     // 卡路里            可能没有这个字段
+  "activeDuration": 4,               // 活动持续时间       可能没有这个字段
 }
 ```
 
@@ -87,6 +88,7 @@
   "sleep_awake_duration": 54,        // 夜间清醒时长（单位：分钟）
   "total_score": 67,                 // 睡眠总评分（0-100，67为良好）
   "friendly_score": 67               // 睡眠友好评分（与总评分一致）
+  "daytime_duration": 130,           // 日间睡眠时间（单位：分钟） 可能没有这个字段
 }
 ```
 
@@ -164,7 +166,7 @@
     "stress": 1,                     // 最低压力值
     "time": 1679086440               // 最低压力出现时间戳
   },
-  "stress_scale": {                  // 压力等级分布（单位：小时）
+  "stress_scale": {                  // 压力等级分布（单位：分钟）
     "mild": 9,                       // 轻度压力时长
     "moderate": 3,                   // 中度压力时长
     "relax": 87,                     // 放松状态时长
@@ -185,17 +187,31 @@
 
 ```json
 {
+  "sports_value": {
+  "running": {
+    "field_type": "int_value",
+    "field_unit": "metre",
+    "int_value": 301			   // 本周运动长度（单位：米）
+    }
+  },
+ "sports_duration": {
+    "field_type": "int_value",
+    "field_unit": "sec",
+    "int_value": 311			    // 本周运动时间（单位：秒）
+   },
+  "sports_hr_max": 160,				// 本周最高心率
   "sport_times": 0,                  // 本周运动次数
   "sport_times_diff": 0,             // 与上周运动次数的差值（0表示无变化）
   "sport_days": 0,                   // 本周运动天数
   "sport_days_diff": 0,              // 与上周运动天数的差值
-  "steps_summary": {                 // 本周步数汇总
+  "steps_summary": {                 // 本周步数汇总，						标志位1
     "field_type": "int_value",       // 字段类型（整数型）
     "field_unit": "step",            // 单位（步）
     "int_value": 35052               // 本周总步数
   },
-  "step_goal_achieve": 2,            // 本周步数目标达成次数
-  "calorie_summary": {               // 本周卡路里汇总
+  "step_goal_achieve": 2,            // 本周步数目标达成次数				   标志位1
+  "cal_goal_achieve":4               // 本周卡路里目标达成次数
+  "calorie_summary": {               // 本周卡路里汇总，					标志位1
     "field_type": "int_value",       // 字段类型（整数型）
     "field_unit": "kcal",            // 单位（千卡）
     "int_value": 1021                // 本周总卡路里消耗
@@ -231,10 +247,12 @@
       }
     }
   },
-  "sleep_report": {                  // 本周睡眠报告
+  "sleep_report": {                  // 本周睡眠报告，							标志位1
     "avg_sleep_score": 51,           // 日均睡眠评分（0-100，越高睡眠质量越好）
     "max_sleep_score": 67,           // 本周最高睡眠评分
     "avg_sleep_duration": 709,       // 日均睡眠总时长（单位：分钟）
+    "avg_friendly_score": 77,
+    "max_friendly_score" : 80,
     "avg_deep_sleep_duration": 86,   // 日均深度睡眠时长（单位：分钟）
     "avg_deep_sleep_rate": 13,       // 日均深度睡眠占比（13%）
     "sleep_stage": 1,                // 睡眠阶段等级（1为基础等级）
@@ -244,7 +262,7 @@
     "week_earliest_wake_up_time": 1764969596, // 本周最早醒来时间（时间戳）
     "week_earliest_wake_up_zone": 8  // 最早醒来时间对应的时区（+8时区）
   },
-  "hlth_status": {                   // 本周健康状态汇总
+  "hlth_status": {                   // 本周健康状态汇总，					   标志位1
     "avg_rhr": 65,                   // 日均静息心率（单位：次/分钟）
     "max_hr": 119,                   // 本周最高心率（单位：次/分钟）
     "avg_stress": 18,                // 日均压力值（0-100，越低压力越小）
@@ -252,6 +270,8 @@
   },
   "version": 1                       // 报告数据版本号（V1）
 }
+
+这个json的格式不一定，暂时只能说，有标志位1的字段是必有的字段
 ```
 
 
@@ -302,11 +322,8 @@
 | days                     | watch_calories_report                   | 每日卡路里报告（汇总单日总卡路里消耗及卡路里目标达成情况）   |
 | days                     | watch_calories_record                   | 每日卡路里记录（按时间段细分的单日卡路里消耗明细数据）       |
 | days                     | watch_manual_spo2_report                | 手动血氧报告（汇总单日手动测量的血氧相关数据）               |
-|                          |                                         |                                                              |
 | days                     | watch_hrm_record                        | 每日心率记录（单日原始心率数据，含连续测量的心率信息）       |
-|                          |                                         |                                                              |
 | days                     | huami_calories_record                   | 华米卡路里记录（按时间段细分的华米设备记录的单日卡路里消耗明细） |
-|                          |                                         |                                                              |
 | days                     | watch_stress_record                     | 每日压力记录（单日原始压力数据，含连续测量的压力信息）       |
 | days                     | watch_daytime_sleep_record              | 日间睡眠记录（按时间段细分的日间小憩状态、时长明细数据）     |
 | days                     | huami_regular_active_stage              | 华米常规活动阶段记录（细分单日不同活动阶段的运动数据，如步行、跑步等） |
