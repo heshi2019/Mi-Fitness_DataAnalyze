@@ -43,7 +43,9 @@
 
 ## 二、各 Key 对应的 Value 列 JSON 字段含义
 
-### 1. Key: watch_steps_report（每日步数报告）
+### 1. Key: watch_steps_report（每日步数报告）*特殊说明，文末
+
+这个字段和顶层表中，tag=daily_report ，key=steps，的数据是重复的，时间颗粒都是按天存储的，并且字段还没这个全
 
 ```json
 {
@@ -57,6 +59,8 @@
 ```
 
 ### 2. Key: watch_steps_record（每日步数记录）
+
+底层表中有步数记录，不用这个了
 
 ```json
 [
@@ -137,6 +141,7 @@
     "time": 1679197800,              // 最低心率出现时间戳
     "hrm": 47                        // 最低心率值（单位：次/分钟）
   },
+    //可能没有这个字段
   "rhr_avg": 64                      // 日均静息心率（单位：次/分钟）
 }
 ```
@@ -587,4 +592,37 @@
 3. **活动模式编码**：`1=跑步`、`3=骑行`、`7=步行`，其余编码待补充。
 4. **数据单位说明**：步数单位为 “步”，距离为 “米”，时长为 “秒”（运动数据）或 “分钟”（睡眠数据），心率为 “次 / 分钟”，卡路里为 “千卡”。
 5. **设备标识**：`did`字段中`default_did`为默认设备，`xiaomisports_app`为小米运动 APP，`huami.xxx`为华米设备，对应数据来源的设备类型。
+
+
+
+
+
+watch_steps_report这个字段，did列有三种值，分别为default_did，huami.xxxx（xx为数字），xiaomisports_app，
+
+huami.xxxx（xx为数字）和 xiaomisports_app 用的都是同一种形式的数据，也就是前面列出的，这两个名字代表同一种数据，2022.10.27把 xiaomisports_app  重命名为了 huami.xxxx（xx为数字）
+
+```json
+ { "steps": 217,                      // 单日总步数
+  "distance": 139,                   // 单日总距离（单位：米）
+  "actSteps": {"0": 217},            // 实际步数（0为默认设备标识，值为217）
+  "goal": 6000                       // 单日步数目标（6000步）
+  "calories": 5,                     // 卡路里            可能没有这个字段
+  "activeDuration": 4,               // 活动持续时间       可能没有这个字段
+}
+```
+
+default_did的数据少一些字段
+
+```json
+{
+    "steps": 1466,
+    "distance": 996,
+    "actSteps": {
+        "0": 1466
+    },
+    "goal": 6000
+}
+```
+
+
 

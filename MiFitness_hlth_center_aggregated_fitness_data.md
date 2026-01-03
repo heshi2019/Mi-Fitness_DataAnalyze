@@ -31,7 +31,7 @@
 
 ## 2.tag = daily_fitness
 
-### key=goal
+### key=goal（time字段，时间颗粒度，天）
 
 ```json
    
@@ -64,7 +64,7 @@
 
 ## 3.tag = daily_report
 
-### key = valid_stand
+### key = valid_stand（time字段，时间颗粒度，天）
 
 ```json
 {
@@ -77,7 +77,7 @@
 ```json
 {
     "calories": 46,		//卡路里
-    "distance": 1021,	//距离
+    "distance": 1021,	//距离，米
     "steps": 1631		//步数
 }
 ```
