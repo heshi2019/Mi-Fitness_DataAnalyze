@@ -1,4 +1,4 @@
-浏览器搜索小米账号 - 隐私中心 - 管理您的数据 - 小米运动健康 - 下载
+浏览器搜索[小米账号](https://account.xiaomi.com/fe/service/account?cUserId=GJ6ZEpRMdArvPZNEnpMygFHxFc4&userId=1311597473&_locale=zh_CN) - 隐私中心 - 管理您的数据 - 小米运动健康 - 下载
 
 
 
